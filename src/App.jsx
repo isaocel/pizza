@@ -114,7 +114,7 @@ function App() {
               <CountButton />
               <div className="siparis-toplami">
                 <div className="siparis-toplami-ust">
-                  <div className="siparis-title">Secimler Toplamı</div>
+                  <div className="siparis-title">Sipariş Toplamı</div>
                   <div className="secim-ucreti-container">
                     <div className="secim-ucreti">Seçimler</div>
                     <div className="secim-ucreti-tl">25.00₺</div>
