@@ -12,7 +12,9 @@ export default function Home() {
             <img src={TYlogo} alt="Teknolojik Yemekler Logo" />
           </div>
 
-          <h1 className="slogan">KOD ACIKTIRIR PİZZA, DOYURUR</h1>
+          <div className="slogan-container">
+            <h1 className="slogan">KOD ACIKTIRIR PİZZA, DOYURUR</h1>
+          </div>
           <div className="aciktim">
             <Link to="/order">ACIKTIM </Link>
           </div>
