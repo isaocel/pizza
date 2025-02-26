@@ -15,7 +15,7 @@ const NavBar = () => {
       <div className="separator">-</div>
       <div className="nav-item">
         <NavLink
-          to="/"
+          to="/order"
           className={({ isActive }) => (isActive ? "active" : "")}
         >
           Sipariş oluştur

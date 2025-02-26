@@ -1,14 +1,34 @@
-export default function CountButton() {
+import { useState } from "react";
+
+export default function CountButton({ handleChange }) {
+  const [count, setCount] = useState(0);
+
+  const increment = () => {
+    setCount(count + 1);
+    handleChange({ target: { name: "quantity", value: count + 1 } });
+  };
+
+  const decrement = () => {
+    if (count > 0) {
+      setCount(count - 1);
+      handleChange({ target: { name: "quantity", value: count - 1 } });
+    }
+  };
+
   return (
-    <div class="increment-decrement-container">
-      <div class="increment-decrement-button">
-        <button class="decrement">-</button>
+    <div className="increment-decrement-container">
+      <div className="increment-decrement-button">
+        <button className="decrement" onClick={decrement}>
+          -
+        </button>
       </div>
-      <div class="counter-container">
-        <span class="counter">0</span>
+      <div className="counter-container">
+        <span className="counter">{count}</span>
       </div>
-      <div class="increment-decrement-button">
-        <button class="increment">+</button>
+      <div className="increment-decrement-button">
+        <button className="increment" onClick={increment}>
+          +
+        </button>
       </div>
     </div>
   );
