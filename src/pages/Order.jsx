@@ -4,8 +4,24 @@ import CheckboxItem from "../components/CheckBoxItem";
 import CountButton from "../components/CountButton";
 import NavBar from "../components/NavBar";
 import Banner from "../components/Banner";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
 
-const pizzaToppings = [
+const Pizzas = [
+  {
+    pizzaAdi: "Position Absolute Acı Pizza",
+    pizzaAciklamasi:
+      "Frontend Dev olarak hala position:absolute kullanıyorsan bu çok acı pizza tam sana göre. Pizza, domates, peynir ve genellikle çeşitli diğer malzemelerle kaplanmış, daha sonra geleneksel olarak odun ateşinde bir fırında yüksek sıcaklıkta pişirilen, genellikle yuvarlak, düzleştirilmiş mayalı buğday bazlı hamurdan oluşan İtalyan kökenli lezzetli bir yemektir. Küçük bir pizzaya bazen pizzetta denir.",
+    pizzaFiyatı: 85.5,
+    pizzaYorumSayisi: 200,
+    pizzaOrtalamaPuan: 4.9,
+  },
+];
+
+const myPizza = Pizzas[0];
+
+const ekMalzemeler = [
   "Pepperoni",
   "Sosis",
   "Kanada Jambonu",
@@ -22,9 +38,74 @@ const pizzaToppings = [
   "Kabak",
 ];
 
+const initialFormState = {
+  isim: "",
+  boyut: "",
+  hamur: "",
+  ekMalzemeler: [],
+  siparisNotu: "",
+  adet: 1,
+};
+
 function Order() {
+  const [form, setForm] = useState(initialFormState);
+  const [isValid, setIsValid] = useState(false);
+  const [errors, setErrors] = useState({
+    isim: false,
+    boyut: false,
+    hamur: false,
+    ekMalzemeler: false,
+    adet: false,
+  });
+  const history = useHistory();
+
+  useEffect(() => {
+    setErrors({
+      isim: form.isim.trim().length < 3,
+      boyut: form.boyut === "",
+      hamur: form.hamur === "",
+      ekMalzemeler:
+        form.ekMalzemeler.length < 4 || form.ekMalzemeler.length > 10,
+      adet: !form.adet > 0,
+    });
+
+    const isFormValid =
+      form.isim.trim().length >= 3 &&
+      form.boyut !== "" &&
+      form.hamur !== "" &&
+      form.ekMalzemeler.length >= 4 &&
+      form.ekMalzemeler.length <= 10 &&
+      form.adet > 0;
+
+    setIsValid(isFormValid);
+  }, [form]);
+
   function handleChange(event) {
-    console.log(event.target.name, event.target.value);
+    const { name, value, type, checked } = event.target;
+
+    if (type === "checkbox") {
+      setForm((prevForm) => {
+        const newToppings = checked
+          ? [...prevForm.ekMalzemeler, name]
+          : prevForm.ekMalzemeler.filter((t) => t !== name);
+
+        return { ...prevForm, ekMalzemeler: newToppings };
+      });
+    } else {
+      setForm((prevForm) => ({ ...prevForm, [name]: value }));
+    }
+  }
+
+  function handleOrderSubmit() {
+    axios
+      .post("https://reqres.in/api/pizza", form)
+      .then((response) => {
+        console.log("Sipariş özeti:", response.data);
+        history.push("/success");
+      })
+      .catch((error) => {
+        console.error("Bir hata oluştu:", error);
+      });
   }
 
   return (
@@ -35,21 +116,13 @@ function Order() {
           <div className="left-spacer"></div>
           <div className="center-content">
             <NavBar />
-            <h2>Position Absolute Acı Pizza</h2>
+            <h2>{myPizza.pizzaAdi}</h2>
             <div className="pizza-info">
-              <p className="price">85.50₺</p>
-              <p className="rating">4.9</p>
-              <p className="number-of-votes">(200)</p>
+              <p className="price">{myPizza.pizzaFiyatı.toFixed(2)}₺</p>
+              <p className="rating">{myPizza.pizzaOrtalamaPuan}</p>
+              <p className="number-of-votes">({myPizza.pizzaYorumSayisi})</p>
             </div>
-            <p className="explanation">
-              Frontend Dev olarak hala position:absolute kullanıyorsan bu çok
-              acı pizza tam sana göre. Pizza, domates, peynir ve genellikle
-              çeşitli diğer malzemelerle kaplanmış, daha sonra geleneksel olarak
-              odun ateşinde bir fırında yüksek sıcaklıkta pişirilen, genellikle
-              yuvarlak, düzleştirilmiş mayalı buğday bazlı hamurdan oluşan
-              İtalyan kökenli lezzetli bir yemektir. Küçük bir pizzaya bazen
-              pizzetta denir.
-            </p>
+            <p className="explanation">{myPizza.pizzaAciklamasi}</p>
             <div className="boyut-hamur-container">
               <div className="boyut-sec">
                 <label className="boyut-sec-aciklama">
@@ -60,6 +133,7 @@ function Order() {
                     type="radio"
                     name="boyut"
                     value="kucuk"
+                    checked={form.boyut === "kucuk"}
                     onChange={handleChange}
                   />
                   Küçük
@@ -69,6 +143,7 @@ function Order() {
                     type="radio"
                     name="boyut"
                     value="orta"
+                    checked={form.boyut === "orta"}
                     onChange={handleChange}
                   />
                   Orta
@@ -78,6 +153,7 @@ function Order() {
                     type="radio"
                     name="boyut"
                     value="buyuk"
+                    checked={form.boyut === "buyuk"}
                     onChange={handleChange}
                   />
                   Büyük
@@ -88,8 +164,13 @@ function Order() {
                 <label htmlFor="hamur" className="hamur-sec-aciklama">
                   Hamur Seç <span>*</span>
                 </label>
-                <select id="hamur" name="hamur" onChange={handleChange}>
-                  <option value="" disabled selected>
+                <select
+                  id="hamur"
+                  name="hamur"
+                  onChange={handleChange}
+                  value={form.hamur}
+                >
+                  <option value="" disabled>
                     Hamur Kalınlığı
                   </option>
                   <option value="ince">İnce</option>
@@ -102,12 +183,12 @@ function Order() {
               En Fazla 10 malzeme seçebilirsiniz. 5₺
             </p>
             <div className="ek-malzeme-checkbox-container">
-              {pizzaToppings.map((topping, index) => (
+              {ekMalzemeler.map((ekMalzeme, index) => (
                 <CheckboxItem
                   key={index}
-                  label={topping}
-                  checked={false}
-                  name={topping}
+                  label={ekMalzeme}
+                  checked={form.ekMalzemeler.includes(ekMalzeme)}
+                  name={ekMalzeme}
                   onChange={handleChange}
                 />
               ))}
@@ -116,8 +197,8 @@ function Order() {
             <div className="textbox-container">
               <input
                 type="text"
-                id="name"
-                name="name"
+                id="isim"
+                name="isim"
                 className="textbox"
                 placeholder="Ad Soyad?"
                 onChange={handleChange}
@@ -133,22 +214,36 @@ function Order() {
             </div>
             <hr className="solid-hr" />
             <div className="bottom-container">
-              <CountButton handleChange={handleChange} />
+              <CountButton handleChange={handleChange} adet={form.adet} />
 
               <div className="siparis-toplami">
                 <div className="siparis-toplami-ust">
                   <div className="siparis-title">Sipariş Toplamı</div>
                   <div className="secim-ucreti-container">
                     <div className="secim-ucreti">Seçimler</div>
-                    <div className="secim-ucreti-tl">25.00₺</div>
+                    <div className="secim-ucreti-tl">
+                      {(form.ekMalzemeler.length * 5 * form.adet).toFixed(2)}₺
+                    </div>
                   </div>
                   <div className="toplam-ucret-container">
                     <div className="toplam-ucret">Toplam</div>
-                    <div className="toplam-ucret-tl">110.50₺</div>
+                    <div className="toplam-ucret-tl">
+                      {(
+                        form.adet * myPizza.pizzaFiyatı +
+                        form.ekMalzemeler.length * 5 * form.adet
+                      ).toFixed(2)}
+                      ₺
+                    </div>
                   </div>
                 </div>
                 <div className="siparis-toplami-alt">
-                  <button className="siparis-ver">Sipariş Ver</button>
+                  <button
+                    className="siparis-ver"
+                    disabled={!isValid}
+                    onClick={handleOrderSubmit}
+                  >
+                    Sipariş Ver
+                  </button>
                 </div>
               </div>
             </div>

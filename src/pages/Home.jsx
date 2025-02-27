@@ -16,7 +16,9 @@ export default function Home() {
             <h1 className="slogan">KOD ACIKTIRIR PİZZA, DOYURUR</h1>
           </div>
           <div className="aciktim">
-            <Link to="/order">ACIKTIM </Link>
+            <nav>
+              <Link to="/order">ACIKTIM </Link>
+            </nav>
           </div>
         </div>
       </main>

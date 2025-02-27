@@ -1,17 +1,11 @@
-import { useState } from "react";
-
-export default function CountButton({ handleChange }) {
-  const [count, setCount] = useState(0);
-
+export default function CountButton({ handleChange, adet }) {
   const increment = () => {
-    setCount(count + 1);
-    handleChange({ target: { name: "quantity", value: count + 1 } });
+    handleChange({ target: { name: "adet", value: adet + 1 } });
   };
 
   const decrement = () => {
-    if (count > 0) {
-      setCount(count - 1);
-      handleChange({ target: { name: "quantity", value: count - 1 } });
+    if (adet > 0) {
+      handleChange({ target: { name: "adet", value: adet - 1 } });
     }
   };
 
@@ -23,7 +17,7 @@ export default function CountButton({ handleChange }) {
         </button>
       </div>
       <div className="counter-container">
-        <span className="counter">{count}</span>
+        <span className="counter">{adet}</span>
       </div>
       <div className="increment-decrement-button">
         <button className="increment" onClick={increment}>
