@@ -77,7 +77,7 @@ function Order() {
       form.ekMalzemeler.length <= 10 &&
       form.adet > 0;
 
-    setIsValid(isFormValid);
+    isFormValid ? setIsValid(isFormValid) : console.log(errors);
   }, [form]);
 
   function handleChange(event) {
