@@ -1,7 +1,7 @@
 import { Route, Switch } from "react-router-dom";
-import Order from "./pages/order";
-import Home from "./pages/home";
-import Success from "./pages/success";
+import Order from "./pages/Order";
+import Home from "./pages/Home";
+import Success from "./pages/Success";
 
 function App() {
   return (
