@@ -45,6 +45,8 @@ const initialFormState = {
   ekMalzemeler: [],
   siparisNotu: "",
   adet: 1,
+  ekMalzemeFiyati: 0,
+  toplamFiyat: 0,
 };
 
 function Order() {
@@ -58,6 +60,17 @@ function Order() {
     adet: false,
   });
   const history = useHistory();
+
+  useEffect(() => {
+    const ekMalzemeFiyati = form.ekMalzemeler.length * 5 * form.adet;
+    const toplamFiyat = form.adet * myPizza.pizzaFiyatı + ekMalzemeFiyati;
+
+    setForm((prevForm) => ({
+      ...prevForm,
+      ekMalzemeFiyati,
+      toplamFiyat,
+    }));
+  }, [form.ekMalzemeler, form.adet]);
 
   useEffect(() => {
     setErrors({
@@ -233,17 +246,13 @@ function Order() {
                     <div className="secim-ucreti-container">
                       <div className="secim-ucreti">Seçimler</div>
                       <div className="secim-ucreti-tl">
-                        {(form.ekMalzemeler.length * 5 * form.adet).toFixed(2)}₺
+                        {form.ekMalzemeFiyati.toFixed(2)}₺
                       </div>
                     </div>
                     <div className="toplam-ucret-container">
                       <div className="toplam-ucret">Toplam</div>
                       <div className="toplam-ucret-tl">
-                        {(
-                          form.adet * myPizza.pizzaFiyatı +
-                          form.ekMalzemeler.length * 5 * form.adet
-                        ).toFixed(2)}
-                        ₺
+                        {form.toplamFiyat.toFixed(2)}₺
                       </div>
                     </div>
                   </div>
