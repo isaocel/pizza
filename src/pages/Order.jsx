@@ -96,7 +96,13 @@ function Order() {
     }
   }
 
-  function handleOrderSubmit() {
+  function handleOrderSubmit(event) {
+    event.preventDefault();
+    if (!isValid) {
+      console.error("Form geçerli değil, lütfen eksikleri tamamlayın.");
+      return;
+    }
+
     axios
       .post("https://reqres.in/api/pizza", form)
       .then((response) => {
@@ -123,130 +129,136 @@ function Order() {
               <p className="number-of-votes">({myPizza.pizzaYorumSayisi})</p>
             </div>
             <p className="explanation">{myPizza.pizzaAciklamasi}</p>
-            <div className="boyut-hamur-container">
-              <div className="boyut-sec">
-                <label className="boyut-sec-aciklama">
-                  Boyut Seç <span>*</span>
-                </label>
-                <label key="kucuk">
-                  <input
-                    type="radio"
-                    name="boyut"
-                    value="kucuk"
-                    checked={form.boyut === "kucuk"}
+
+            <form onSubmit={(event) => handleOrderSubmit(event)}>
+              <div className="boyut-hamur-container">
+                <div className="boyut-sec">
+                  <label className="boyut-sec-aciklama">
+                    Boyut Seç <span>*</span>
+                  </label>
+                  <label key="kucuk">
+                    <input
+                      type="radio"
+                      name="boyut"
+                      value="kucuk"
+                      checked={form.boyut === "kucuk"}
+                      onChange={handleChange}
+                    />
+                    Küçük
+                  </label>
+                  <label key="orta">
+                    <input
+                      type="radio"
+                      name="boyut"
+                      value="orta"
+                      checked={form.boyut === "orta"}
+                      onChange={handleChange}
+                    />
+                    Orta
+                  </label>
+                  <label key="buyuk">
+                    <input
+                      type="radio"
+                      name="boyut"
+                      value="buyuk"
+                      checked={form.boyut === "buyuk"}
+                      onChange={handleChange}
+                    />
+                    Büyük
+                  </label>
+                </div>
+
+                <div className="hamur-sec">
+                  <label htmlFor="hamur" className="hamur-sec-aciklama">
+                    Hamur Seç <span>*</span>
+                  </label>
+                  <select
+                    id="hamur"
+                    name="hamur"
                     onChange={handleChange}
-                  />
-                  Küçük
-                </label>
-                <label key="orta">
-                  <input
-                    type="radio"
-                    name="boyut"
-                    value="orta"
-                    checked={form.boyut === "orta"}
-                    onChange={handleChange}
-                  />
-                  Orta
-                </label>
-                <label key="buyuk">
-                  <input
-                    type="radio"
-                    name="boyut"
-                    value="buyuk"
-                    checked={form.boyut === "buyuk"}
-                    onChange={handleChange}
-                  />
-                  Büyük
-                </label>
+                    value={form.hamur}
+                  >
+                    <option value="" disabled>
+                      Hamur Kalınlığı
+                    </option>
+                    <option value="ince">İnce</option>
+                    <option value="kalin">Kalın</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="hamur-sec">
-                <label htmlFor="hamur" className="hamur-sec-aciklama">
-                  Hamur Seç <span>*</span>
-                </label>
-                <select
-                  id="hamur"
-                  name="hamur"
-                  onChange={handleChange}
-                  value={form.hamur}
-                >
-                  <option value="" disabled>
-                    Hamur Kalınlığı
-                  </option>
-                  <option value="ince">İnce</option>
-                  <option value="kalin">Kalın</option>
-                </select>
+              <p className="ek-malzeme-baslik">Ek malzemeler</p>
+              <p className="ek-malzeme-aciklama">
+                En Fazla 10 malzeme seçebilirsiniz. 5₺
+              </p>
+              <div className="ek-malzeme-checkbox-container">
+                {ekMalzemeler.map((ekMalzeme, index) => (
+                  <CheckboxItem
+                    key={index}
+                    label={ekMalzeme}
+                    checked={form.ekMalzemeler.includes(ekMalzeme)}
+                    name={ekMalzeme}
+                    onChange={handleChange}
+                  />
+                ))}
               </div>
-            </div>
-            <p className="ek-malzeme-baslik">Ek malzemeler</p>
-            <p className="ek-malzeme-aciklama">
-              En Fazla 10 malzeme seçebilirsiniz. 5₺
-            </p>
-            <div className="ek-malzeme-checkbox-container">
-              {ekMalzemeler.map((ekMalzeme, index) => (
-                <CheckboxItem
-                  key={index}
-                  label={ekMalzeme}
-                  checked={form.ekMalzemeler.includes(ekMalzeme)}
-                  name={ekMalzeme}
+
+              <p className="siparis-notu-baslik">Sipariş Notu </p>
+              <div className="textbox-container">
+                <input
+                  type="text"
+                  id="isim"
+                  name="isim"
+                  className="textbox"
+                  placeholder="Ad Soyad?"
                   onChange={handleChange}
                 />
-              ))}
-            </div>
-            <p className="siparis-notu-baslik">Sipariş Notu </p>
-            <div className="textbox-container">
-              <input
-                type="text"
-                id="isim"
-                name="isim"
-                className="textbox"
-                placeholder="Ad Soyad?"
-                onChange={handleChange}
-              />
-              <input
-                type="text"
-                id="textbox"
-                name="siparisNotu"
-                className="textbox"
-                placeholder="Siparişine eklemek istediğin bir not var mı?"
-                onChange={handleChange}
-              />
-            </div>
-            <hr className="solid-hr" />
-            <div className="bottom-container">
-              <CountButton handleChange={handleChange} adet={form.adet} />
+                <input
+                  type="text"
+                  id="textbox"
+                  name="siparisNotu"
+                  className="textbox"
+                  placeholder="Siparişine eklemek istediğin bir not var mı?"
+                  onChange={handleChange}
+                />
+              </div>
 
-              <div className="siparis-toplami">
-                <div className="siparis-toplami-ust">
-                  <div className="siparis-title">Sipariş Toplamı</div>
-                  <div className="secim-ucreti-container">
-                    <div className="secim-ucreti">Seçimler</div>
-                    <div className="secim-ucreti-tl">
-                      {(form.ekMalzemeler.length * 5 * form.adet).toFixed(2)}₺
+              <hr className="solid-hr" />
+              <div className="bottom-container">
+                <CountButton handleChange={handleChange} adet={form.adet} />
+
+                <div className="siparis-toplami">
+                  <div className="siparis-toplami-ust">
+                    <div className="siparis-title">Sipariş Toplamı</div>
+                    <div className="secim-ucreti-container">
+                      <div className="secim-ucreti">Seçimler</div>
+                      <div className="secim-ucreti-tl">
+                        {(form.ekMalzemeler.length * 5 * form.adet).toFixed(2)}₺
+                      </div>
+                    </div>
+                    <div className="toplam-ucret-container">
+                      <div className="toplam-ucret">Toplam</div>
+                      <div className="toplam-ucret-tl">
+                        {(
+                          form.adet * myPizza.pizzaFiyatı +
+                          form.ekMalzemeler.length * 5 * form.adet
+                        ).toFixed(2)}
+                        ₺
+                      </div>
                     </div>
                   </div>
-                  <div className="toplam-ucret-container">
-                    <div className="toplam-ucret">Toplam</div>
-                    <div className="toplam-ucret-tl">
-                      {(
-                        form.adet * myPizza.pizzaFiyatı +
-                        form.ekMalzemeler.length * 5 * form.adet
-                      ).toFixed(2)}
-                      ₺
-                    </div>
+                  <div className="siparis-toplami-alt">
+                    <button
+                      type="submit"
+                      className="siparis-ver"
+                      disabled={!isValid}
+                    >
+                      Sipariş Ver
+                    </button>
                   </div>
-                </div>
-                <div className="siparis-toplami-alt">
-                  <button
-                    className="siparis-ver"
-                    disabled={!isValid}
-                    onClick={handleOrderSubmit}
-                  >
-                    Sipariş Ver
-                  </button>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
           <div className="right-spacer"></div>
         </div>

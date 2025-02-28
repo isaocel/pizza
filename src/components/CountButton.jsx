@@ -12,7 +12,7 @@ export default function CountButton({ handleChange, adet }) {
   return (
     <div className="increment-decrement-container">
       <div className="increment-decrement-button">
-        <button className="decrement" onClick={decrement}>
+        <button className="decrement" type="button" onClick={decrement}>
           -
         </button>
       </div>
@@ -20,7 +20,7 @@ export default function CountButton({ handleChange, adet }) {
         <span className="counter">{adet}</span>
       </div>
       <div className="increment-decrement-button">
-        <button className="increment" onClick={increment}>
+        <button className="increment" type="button" onClick={increment}>
           +
         </button>
       </div>
