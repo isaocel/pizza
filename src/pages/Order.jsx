@@ -111,7 +111,10 @@ function Order() {
 
   function handleOrderSubmit(event) {
     event.preventDefault();
-    if (!isValid) {
+
+    const hasErrors = Object.values(errors).includes(true);
+
+    if (!isValid || hasErrors) {
       console.error("Form geçerli değil, lütfen eksikleri tamamlayın.");
       return;
     }
